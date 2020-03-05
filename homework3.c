@@ -23,7 +23,8 @@ int main(void)
     // Initialize Timer1 to provide a one millisecond count interval for updating the button history.
     // YOU MUST WRITE THIS FUNCTION IN myTimer.c
     initTimer(TIMER32_1_BASE, TIMER1_PRESCALER, TIMER1_COUNT);
-
+    unsigned int n = 7;
+    unsigned char passVal=0xFF;
     while(1)
     {
         // Update the color of LED2 using count0 as the index.
@@ -49,7 +50,26 @@ int main(void)
 
         // TODO: If Timer1 has expired, update the button history from the pushbutton value.
         // YOU MUST WRITE timer1expired IN myTimer.c
-
+        if (timer1Expired()==true){
+            bool pressed = checkStatus_BoosterpackS1();
+            if (pressed==true){
+                passVal=passVal&~passVal<<n;
+                n--;
+            }
+            else{
+                passVal=passVal|passVal<<n;
+                n--;
+            }
+            if (fsmBoosterpackButtonS1(passVal)==true){
+                count1++;
+                count1=count1%8;
+                changeBoosterpackLED(count1);
+                n=7;
+            }
+            else{
+                n=7;
+            }
+        }
 
 
         // TODO: Call the button state machine function to check for a completed, debounced button press.
@@ -162,12 +182,12 @@ bool fsmBoosterpackButtonS1(unsigned char buttonhistory)
     static state currentState = up;
     switch (currentState){
     case up:
-        if (currentState == up){
+        if (buttonhistory==0xFF){
             currentState = down;
         }
         break;
     case down:
-        if (currentState==down){
+        if (currentState==0x00){
             currentState=up;
             pressed = true;
         }
