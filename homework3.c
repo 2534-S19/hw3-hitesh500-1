@@ -28,13 +28,22 @@ int main(void)
     {
         // Update the color of LED2 using count0 as the index.
         // YOU MUST WRITE THIS FUNCTION BELOW.
-        changeLaunchpadLED2(count0);
+        //changeLaunchpadLED2(count0);
+
         // Update the color of the Boosterpack LED using count1 as the index.
         // YOU MUST WRITE THIS FUNCTION BELOW.
         changeBoosterpackLED(count1);
 
         // TODO: If Timer0 has expired, increment count0.
         // YOU MUST WRITE timer0expired IN myTimer.c
+        if(timer0Expired()==true){
+            count0++;
+            count0=count0%8;
+           changeLaunchpadLED2(count0);
+        }
+        else{
+            changeLaunchpadLED2(count0);
+        }
 
 
 
@@ -64,7 +73,42 @@ void initBoard()
 // Since count is an unsigned integer, you can mask the value in some way.
 void changeLaunchpadLED2(unsigned int count)
 {
-
+    switch (count){
+    case 0://red
+        turnOn_LaunchpadLED2Red();
+        break;
+    case 1://green
+        turnOff_LaunchpadLED2Red();
+        turnOn_LaunchpadLED2Green();
+        break;
+    case 2://yellow
+        turnOn_LaunchpadLED2Green();
+        turnOn_LaunchpadLED2Red();
+        break;
+    case 3://blue
+        turnOff_LaunchpadLED2Green();
+        turnOn_LaunchpadLED2Blue();
+        break;
+    case 4://magenta
+        turnOn_LaunchpadLED2Blue();
+        turnOn_LaunchpadLED2Red();
+        break;
+    case 5: //cyan
+        turnOff_LaunchpadLED2Red();
+        turnOn_LaunchpadLED2Blue();
+        turnOn_LaunchpadLED2Green();
+        break;
+    case 6: //white
+        turnOn_LaunchpadLED2Red();
+        turnOn_LaunchpadLED2Blue();
+        turnOn_LaunchpadLED2Green();
+        break;
+    case 7: //off
+        turnOff_LaunchpadLED2Red();
+        turnOff_LaunchpadLED2Blue();
+        turnOff_LaunchpadLED2Green();
+        break;
+    }
 }
 
 // TODO: Maybe the value of a count variable to a color for the Boosterpack LED
@@ -76,10 +120,23 @@ void changeBoosterpackLED(unsigned int count)
 
 // TODO: Create a button state machine.
 // The button state machine should return true or false to indicate a completed, debounced button press.
-bool fsmBoosterpackButtonS1(unsigned int buttonhistory)
+bool fsmBoosterpackButtonS1(unsigned char buttonhistory)
 {
     bool pressed = false;
-
-
+    typedef enum {up,down} state;
+    static state currentState = up;
+    switch (currentState){
+    case up:
+        if (currentState == up){
+            currentState = down;
+        }
+        break;
+    case down:
+        if (currentState==down){
+            currentState=up;
+            pressed = true;
+        }
+        break;
+    }
     return pressed;
 }
