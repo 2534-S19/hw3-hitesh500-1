@@ -115,7 +115,42 @@ void changeLaunchpadLED2(unsigned int count)
 // This is essentially a copy of the previous function, using a different LED
 void changeBoosterpackLED(unsigned int count)
 {
-
+    switch (count){
+    case 0://red
+        turnOn_BoosterpackLEDRed();
+        break;
+    case 1://green
+        turnOff_BoosterpackLEDRed();
+        turnOn_BoosterpackLEDGreen();
+        break;
+    case 2://yellow
+        turnOn_BoosterpackLEDGreen();
+        turnOn_BoosterpackLEDRed();
+        break;
+    case 3://blue
+        turnOff_BoosterpackLEDGreen();
+        turnOn_BoosterpackLEDBlue();
+        break;
+    case 4://magenta
+        turnOn_BoosterpackLEDBlue();
+        turnOn_BoosterpackLEDRed();
+        break;
+    case 5: //cyan
+        turnOff_BoosterpackLEDRed();
+        turnOn_BoosterpackLEDBlue();
+        turnOn_BoosterpackLEDGreen();
+        break;
+    case 6: //white
+        turnOn_BoosterpackLEDRed();
+        turnOn_BoosterpackLEDBlue();
+        turnOn_BoosterpackLEDGreen();
+        break;
+    case 7: //off
+        turnOff_BoosterpackLEDRed();
+        turnOff_BoosterpackLEDBlue();
+        turnOff_BoosterpackLEDGreen();
+        break;
+    }
 }
 
 // TODO: Create a button state machine.
