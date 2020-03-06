@@ -3,6 +3,9 @@
 #include "myGPIO.h"
 #include "myTimer.h"
 
+//#define PRESSED 0
+//#define UNPRESSED 1
+
 int main(void)
 {
     // Count variables to control the LEDs.
@@ -23,7 +26,7 @@ int main(void)
     // Initialize Timer1 to provide a one millisecond count interval for updating the button history.
     // YOU MUST WRITE THIS FUNCTION IN myTimer.c
     initTimer(TIMER32_1_BASE, TIMER1_PRESCALER, TIMER1_COUNT);
-    unsigned int n = 7;
+    unsigned int n = 0;
     unsigned char passVal=0xFF;
     while(1)
     {
@@ -33,7 +36,7 @@ int main(void)
 
         // Update the color of the Boosterpack LED using count1 as the index.
         // YOU MUST WRITE THIS FUNCTION BELOW.
-        changeBoosterpackLED(count1);
+        //changeBoosterpackLED(count1);
 
         // TODO: If Timer0 has expired, increment count0.
         // YOU MUST WRITE timer0expired IN myTimer.c
@@ -51,25 +54,19 @@ int main(void)
         // TODO: If Timer1 has expired, update the button history from the pushbutton value.
         // YOU MUST WRITE timer1expired IN myTimer.c
         if (timer1Expired()==true){
-            bool pressed = checkStatus_BoosterpackS1();
-            if (pressed==true){
-                passVal=passVal&~passVal<<n;
-                n--;
+            if (checkStatus_BoosterpackS1()){
+                passVal=passVal<<1;
+                passVal|=BIT0;
+                changeBoosterpackLED(count1++%8);
             }
             else{
-                passVal=passVal|passVal<<n;
-                n--;
+                passVal=passVal<<1;
             }
-            if (fsmBoosterpackButtonS1(passVal)==true){
-                count1++;
-                count1=count1%8;
-                changeBoosterpackLED(count1);
-                n=7;
+            fsmBoosterpackButtonS1(passVal);
+
             }
-            else{
-                n=7;
-            }
-        }
+
+
 
 
         // TODO: Call the button state machine function to check for a completed, debounced button press.
@@ -80,9 +77,9 @@ int main(void)
         // TODO: If a completed, debounced button press has occurred, increment count1.
 
 
-
+        }
     }
-}
+
 
 void initBoard()
 {
@@ -188,8 +185,8 @@ bool fsmBoosterpackButtonS1(unsigned char buttonhistory)
         break;
     case down:
         if (currentState==0x00){
+            pressed=true;
             currentState=up;
-            pressed = true;
         }
         break;
     }
